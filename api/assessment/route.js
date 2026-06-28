@@ -7,7 +7,7 @@ const NAVY = "#0F2747";
 const BLUE = "#1F6FB2";
 const BODY = "#3E4855";
 
-function ownerHtml({ email, score, band, flagged }) {
+function ownerHtml({ email, score, band, flagged, intent, reason }) {
   const areas = (flagged || []).map((f) => f.insight).join(", ") || "none";
   return `
   <div style="font-family:Inter,Arial,sans-serif;color:${BODY};line-height:1.6">
@@ -17,7 +17,9 @@ function ownerHtml({ email, score, band, flagged }) {
       <tr><td style="padding:4px 16px 4px 0;color:#9aa6b4">Score</td><td style="color:${NAVY};font-weight:600">${score} / 100</td></tr>
       <tr><td style="padding:4px 16px 4px 0;color:#9aa6b4">Band</td><td style="color:${NAVY};font-weight:600">${band.name}</td></tr>
       <tr><td style="padding:4px 16px 4px 0;color:#9aa6b4">Flagged</td><td>${areas}</td></tr>
+      <tr><td style="padding:4px 16px 4px 0;color:#9aa6b4">What brought them</td><td>${intent || "—"}</td></tr>
     </table>
+    ${reason ? `<p style="margin:16px 0 0;color:#9aa6b4">In their words</p><p style="margin:4px 0 0;color:${NAVY}">&ldquo;${reason}&rdquo;</p>` : ""}
   </div>`;
 }
 
@@ -57,7 +59,7 @@ export async function POST(req) {
   } catch {
     return Response.json({ ok: false, error: "invalid json" }, { status: 400 });
   }
-  const { email, score, band, flagged } = body || {};
+  const { email, score, band, flagged, intent, reason } = body || {};
   if (!email || typeof score !== "number" || !band?.name) {
     return Response.json({ ok: false, error: "missing fields" }, { status: 400 });
   }
@@ -96,7 +98,7 @@ export async function POST(req) {
           from,
           to: process.env.OWNER_EMAIL,
           subject: `New assessment — ${email} — ${score} (${band.name})`,
-          html: ownerHtml({ email, score, band, flagged }),
+          html: ownerHtml({ email, score, band, flagged, intent, reason }),
         });
       }
       await resend.emails.send({
