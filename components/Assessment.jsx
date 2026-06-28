@@ -9,7 +9,6 @@ const BOOK_CONV = "mailto:hello@alza.group?subject=Elevation%20Conversation";
 const BOOK_ASSESS =
   "mailto:hello@alza.group?subject=Organizational%20Elevation%20Assessment";
 
-// Explicit colors so buttons are always visible regardless of CSS state.
 const BTN_DARK = { backgroundColor: "#0F2747", color: "#ffffff" };
 const BTN_LIGHT = { backgroundColor: "#ffffff", color: "#0F2747" };
 
@@ -19,6 +18,17 @@ const INTENTS = [
   "Getting ahead of problems before they grow",
   "Something happened and we need help",
 ];
+
+const INTENT_NOTE = {
+  "A challenge we're facing right now":
+    "You came in with a challenge already in front of you — so let's be direct about what the signals say.",
+  "Growth is outpacing our systems":
+    "Growth outpacing your systems is one of the most common reasons strong organizations start to strain. Here's where yours is showing it.",
+  "Getting ahead of problems before they grow":
+    "Getting ahead of this is exactly the right instinct. Here's what's worth watching now.",
+  "Something happened and we need help":
+    "When something has already happened, the priority is stabilizing it — then making sure it can't recur. Here's the read.",
+};
 
 const CATEGORIES = [
   {
@@ -70,11 +80,11 @@ const CATEGORIES = [
 const BANDS = [
   {
     max: 30,
-    name: "Stable — On the Surface",
+    name: "Below the Surface",
     tone: "#5E7C6B",
     summary:
-      "Either your organization is genuinely strong here — or the strain hasn't surfaced where you can see it yet. In our experience, the most expensive problems are the ones leadership can't see from the inside. A short conversation is the fastest way to know which one you're dealing with.",
-    step: "A focused Elevation Conversation to confirm what's solid — and surface the blind spots a self-assessment can't reach.",
+      "A low score rarely means nothing's wrong — it usually means the strain hasn't surfaced where you can see it yet. And the fact that you're here suggests something already prompted the question. That instinct is usually right: the most costly organizational problems are the ones that stay invisible until they're urgent.",
+    step: "A focused Elevation Conversation to find what isn't showing up on a self-assessment — before it becomes urgent.",
   },
   {
     max: 60,
@@ -102,8 +112,8 @@ export default function Assessment() {
   const [stage, setStage] = useState("intro");
   const [step, setStep] = useState(0);
   const [intent, setIntent] = useState("");
-  const [sel, setSel] = useState({});
   const [reason, setReason] = useState("");
+  const [sel, setSel] = useState({});
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
@@ -221,24 +231,38 @@ export default function Assessment() {
             <span className="asmt-step-count">First</span>
             <h2 className="asmt-step-title">What brought you here today?</h2>
             <p className="asmt-step-hint">
-              Pick the closest. It helps frame your results.
+              Pick the closest — it helps frame your results.
             </p>
           </div>
           <div className="asmt-options">
             {INTENTS.map((t) => (
               <button
                 key={t}
-                className="asmt-opt"
-                onClick={() => {
-                  setIntent(t);
-                  setStage("questions");
-                  top();
-                }}
+                className={"asmt-opt " + (intent === t ? "on" : "")}
+                onClick={() => setIntent(t)}
+                aria-pressed={intent === t}
               >
+                <span className="asmt-check" aria-hidden="true" />
                 <span>{t}</span>
-                <span style={{ marginLeft: "auto", color: C.copper }}>&#8594;</span>
               </button>
             ))}
+          </div>
+          <div style={{ marginTop: "10px", marginBottom: "8px" }}>
+            <p className="asmt-step-hint" style={{ marginBottom: "10px" }}>
+              In a sentence, what's prompting the question? (optional)
+            </p>
+            <textarea
+              className="gate-input"
+              style={{
+                width: "100%",
+                display: "block",
+                minHeight: "64px",
+                resize: "vertical",
+              }}
+              placeholder="e.g. We're growing fast and a few things are starting to break."
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
           </div>
           <div className="asmt-nav">
             <button
@@ -249,6 +273,16 @@ export default function Assessment() {
               }}
             >
               &#8592; Back
+            </button>
+            <button
+              className="btn btn-primary"
+              style={BTN_DARK}
+              onClick={() => {
+                setStage("questions");
+                top();
+              }}
+            >
+              Continue
             </button>
           </div>
         </div>
@@ -329,7 +363,7 @@ export default function Assessment() {
                 />
               </div>
               <div className="score-labels">
-                <span>Stable</span>
+                <span>Surface</span>
                 <span>Alignment Risk</span>
                 <span>Strain</span>
               </div>
@@ -337,24 +371,19 @@ export default function Assessment() {
           </div>
         </Reveal>
 
+        {intent && INTENT_NOTE[intent] && (
+          <Reveal>
+            <p className="rapid-principle" style={{ marginTop: "30px" }}>
+              {INTENT_NOTE[intent]}
+            </p>
+          </Reveal>
+        )}
+
         {!unlocked ? (
           <Reveal className="gate">
             <p className="gate-lead">
               Get your full organizational profile and recommendations.
             </p>
-            <textarea
-              className="gate-input"
-              style={{
-                width: "100%",
-                display: "block",
-                minHeight: "64px",
-                resize: "vertical",
-                marginBottom: "12px",
-              }}
-              placeholder="Optional: in a sentence, what prompted you to look?"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-            />
             <div className="gate-form">
               <input
                 type="email"
