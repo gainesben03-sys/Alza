@@ -9,6 +9,10 @@ const BOOK_CONV = "mailto:hello@alza.group?subject=Elevation%20Conversation";
 const BOOK_ASSESS =
   "mailto:hello@alza.group?subject=Organizational%20Elevation%20Assessment";
 
+// Explicit colors so buttons are always visible regardless of CSS state.
+const BTN_DARK = { backgroundColor: "#0F2747", color: "#ffffff" };
+const BTN_LIGHT = { backgroundColor: "#ffffff", color: "#0F2747" };
+
 const CATEGORIES = [
   {
     key: "leadership",
@@ -71,7 +75,7 @@ const BANDS = [
     tone: "#1F6FB2",
     summary:
       "Your organization is showing early misalignment across key systems. Individually these gaps feel manageable; together they quietly tax decision speed, retention, and execution. This is the most valuable moment to intervene — before strain becomes structural.",
-    step: "An Organizational Elevation Assessment™ to map the misalignment and realign your systems before the gaps set.",
+    step: "An Organizational Elevation Assessment to map the misalignment and realign your systems before the gaps set.",
   },
   {
     max: 100,
@@ -79,7 +83,7 @@ const BANDS = [
     tone: "#B46A1F",
     summary:
       "Your organization is carrying real structural strain. Misalignment across leadership, people, operations, and culture is likely affecting performance, growth, and the people inside it. The path forward isn't more effort — it's realignment, by design.",
-    step: "An Organizational Elevation Assessment™ to diagnose the structural issues and build a 90-day path back to alignment.",
+    step: "An Organizational Elevation Assessment to diagnose the structural issues and build a 90-day path back to alignment.",
   },
 ];
 
@@ -151,7 +155,7 @@ export default function Assessment() {
         }),
       });
     } catch (e) {
-      // results are computed client-side, so unlock regardless
+      // results compute client-side; unlock regardless
     } finally {
       setSubmitting(false);
       setUnlocked(true);
@@ -164,7 +168,7 @@ export default function Assessment() {
         <div className="asmt-wrap">
           <Reveal>
             <Eyebrow tone={C.blue}>Organizational Diagnostic</Eyebrow>
-            <h1 className="asmt-title">Organizational Pulse Assessment™</h1>
+            <h1 className="asmt-title">Organizational Pulse Assessment&#8482;</h1>
             <p className="asmt-sub">
               A 2-minute diagnostic to understand alignment across leadership,
               people, operations, and culture.
@@ -181,6 +185,7 @@ export default function Assessment() {
             </div>
             <button
               className="btn btn-primary asmt-start"
+              style={BTN_DARK}
               onClick={() => {
                 setStage("questions");
                 top();
@@ -201,7 +206,10 @@ export default function Assessment() {
         <div className="asmt-progress">
           <div
             className="asmt-progress-bar"
-            style={{ width: ((step + 1) / CATEGORIES.length) * 100 + "%" }}
+            style={{
+              width: ((step + 1) / CATEGORIES.length) * 100 + "%",
+              backgroundColor: "#1F6FB2",
+            }}
           />
         </div>
         <div className="asmt-wrap">
@@ -235,9 +243,9 @@ export default function Assessment() {
           </div>
           <div className="asmt-nav">
             <button className="asmt-back" onClick={back}>
-              ← Back
+              &#8592; Back
             </button>
-            <button className="btn btn-primary" onClick={next}>
+            <button className="btn btn-primary" style={BTN_DARK} onClick={next}>
               {step < CATEGORIES.length - 1 ? "Continue" : "See your results"}
             </button>
           </div>
@@ -287,8 +295,13 @@ export default function Assessment() {
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={() => setTouched(true)}
               />
-              <button className="btn btn-primary" onClick={unlock} disabled={submitting}>
-                {submitting ? "Sending…" : "Unlock full results"}
+              <button
+                className="btn btn-primary"
+                style={BTN_DARK}
+                onClick={unlock}
+                disabled={submitting}
+              >
+                {submitting ? "Sending\u2026" : "Unlock full results"}
               </button>
             </div>
             {touched && !emailValid && (
@@ -340,19 +353,19 @@ export default function Assessment() {
               <Eyebrow tone={C.copper}>Recommended next step</Eyebrow>
               <p className="reco-step">{band.step}</p>
               <div className="reco-actions">
-                <a className="btn btn-primary" href={BOOK_CONV}>
+                <a className="btn btn-primary" style={BTN_LIGHT} href={BOOK_CONV}>
                   Book an Elevation Conversation
                 </a>
-                <a className="textlink" href={BOOK_ASSESS}>
-                  Request the Organizational Elevation Assessment™
-                  <span className="textlink-arrow">→</span>
+                <a className="textlink" style={{ color: "#fff" }} href={BOOK_ASSESS}>
+                  Request the Organizational Elevation Assessment
+                  <span className="textlink-arrow">&#8594;</span>
                 </a>
               </div>
             </Reveal>
 
             <Reveal className="rf-restart">
               <button className="asmt-back" onClick={restart}>
-                ↺ Retake assessment
+                &#8634; Retake assessment
               </button>
             </Reveal>
           </div>
