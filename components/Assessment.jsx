@@ -13,6 +13,13 @@ const BOOK_ASSESS =
 const BTN_DARK = { backgroundColor: "#0F2747", color: "#ffffff" };
 const BTN_LIGHT = { backgroundColor: "#ffffff", color: "#0F2747" };
 
+const INTENTS = [
+  "A challenge we're facing right now",
+  "Growth is outpacing our systems",
+  "Getting ahead of problems before they grow",
+  "Something happened and we need help",
+];
+
 const CATEGORIES = [
   {
     key: "leadership",
@@ -63,18 +70,18 @@ const CATEGORIES = [
 const BANDS = [
   {
     max: 30,
-    name: "Stable Foundation",
+    name: "Stable — On the Surface",
     tone: "#5E7C6B",
     summary:
-      "Your organization is fundamentally stable. The systems holding leadership, people, operations, and culture together are largely intact. The opportunity now is refinement — tightening the few areas of drift before they compound as you grow.",
-    step: "A focused Elevation Conversation to pressure-test the few areas of drift and protect what's already working.",
+      "Either your organization is genuinely strong here — or the strain hasn't surfaced where you can see it yet. In our experience, the most expensive problems are the ones leadership can't see from the inside. A short conversation is the fastest way to know which one you're dealing with.",
+    step: "A focused Elevation Conversation to confirm what's solid — and surface the blind spots a self-assessment can't reach.",
   },
   {
     max: 60,
     name: "Alignment Risk",
     tone: "#1F6FB2",
     summary:
-      "Your organization is showing early misalignment across key systems. Individually these gaps feel manageable; together they quietly tax decision speed, retention, and execution. This is the most valuable moment to intervene — before strain becomes structural.",
+      "Your organization is showing real misalignment across key systems. Individually these gaps feel manageable; together they quietly tax decision speed, retention, and execution. This is the most valuable moment to intervene — before strain becomes structural.",
     step: "An Organizational Elevation Assessment to map the misalignment and realign your systems before the gaps set.",
   },
   {
@@ -82,7 +89,7 @@ const BANDS = [
     name: "Organizational Strain",
     tone: "#B46A1F",
     summary:
-      "Your organization is carrying real structural strain. Misalignment across leadership, people, operations, and culture is likely affecting performance, growth, and the people inside it. The path forward isn't more effort — it's realignment, by design.",
+      "Your organization is carrying real structural strain. Misalignment across leadership, people, operations, and culture is affecting performance, growth, and the people inside it. The path forward isn't more effort — it's realignment, by design, and it's worth moving on now.",
     step: "An Organizational Elevation Assessment to diagnose the structural issues and build a 90-day path back to alignment.",
   },
 ];
@@ -94,7 +101,9 @@ function bandFor(score) {
 export default function Assessment() {
   const [stage, setStage] = useState("intro");
   const [step, setStep] = useState(0);
+  const [intent, setIntent] = useState("");
   const [sel, setSel] = useState({});
+  const [reason, setReason] = useState("");
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
@@ -126,12 +135,14 @@ export default function Assessment() {
   };
   const back = () => {
     if (step > 0) setStep((v) => v - 1);
-    else setStage("intro");
+    else setStage("intent");
     top();
   };
   const restart = () => {
     setSel({});
     setStep(0);
+    setIntent("");
+    setReason("");
     setUnlocked(false);
     setEmail("");
     setTouched(false);
@@ -152,6 +163,8 @@ export default function Assessment() {
           score,
           band: { name: band.name, summary: band.summary, step: band.step },
           flagged,
+          intent,
+          reason,
         }),
       });
     } catch (e) {
@@ -188,13 +201,56 @@ export default function Assessment() {
               className="btn btn-primary asmt-start"
               style={BTN_DARK}
               onClick={() => {
-                setStage("questions");
+                setStage("intent");
                 top();
               }}
             >
               Start Assessment
             </button>
           </Reveal>
+        </div>
+      </section>
+    );
+  }
+
+  if (stage === "intent") {
+    return (
+      <section className="asmt asmt-q">
+        <div className="asmt-wrap">
+          <div className="asmt-step-head">
+            <span className="asmt-step-count">First</span>
+            <h2 className="asmt-step-title">What brought you here today?</h2>
+            <p className="asmt-step-hint">
+              Pick the closest. It helps frame your results.
+            </p>
+          </div>
+          <div className="asmt-options">
+            {INTENTS.map((t) => (
+              <button
+                key={t}
+                className="asmt-opt"
+                onClick={() => {
+                  setIntent(t);
+                  setStage("questions");
+                  top();
+                }}
+              >
+                <span>{t}</span>
+                <span style={{ marginLeft: "auto", color: C.copper }}>&#8594;</span>
+              </button>
+            ))}
+          </div>
+          <div className="asmt-nav">
+            <button
+              className="asmt-back"
+              onClick={() => {
+                setStage("intro");
+                top();
+              }}
+            >
+              &#8592; Back
+            </button>
+          </div>
         </div>
       </section>
     );
@@ -284,9 +340,21 @@ export default function Assessment() {
         {!unlocked ? (
           <Reveal className="gate">
             <p className="gate-lead">
-              Enter your email to receive your full organizational profile and
-              recommendations.
+              Get your full organizational profile and recommendations.
             </p>
+            <textarea
+              className="gate-input"
+              style={{
+                width: "100%",
+                display: "block",
+                minHeight: "64px",
+                resize: "vertical",
+                marginBottom: "12px",
+              }}
+              placeholder="Optional: in a sentence, what prompted you to look?"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
             <div className="gate-form">
               <input
                 type="email"
@@ -323,8 +391,10 @@ export default function Assessment() {
               <h3 className="rf-h">Where the strain shows</h3>
               {flagged.length === 0 ? (
                 <p className="rf-summary">
-                  No major strain surfaced across the four systems. That's a strong
-                  signal — and a foundation worth protecting deliberately.
+                  Nothing surfaced sharply across the four systems — but that rarely
+                  means everything is fine. More often, the real strain sits
+                  somewhere a self-assessment can't reach. That's exactly what an
+                  outside diagnostic is built to find.
                 </p>
               ) : (
                 <div className="breakdown">
