@@ -29,11 +29,11 @@ const CATEGORIES = [
     key: "people",
     label: "People & Talent",
     insight: "People systems",
-    line: "Your people systems are running reactively. Hiring, roles, and retention need deliberate structure to hold under growth.",
+    line: "Your people operations are running reactively, with no clear owner — so hiring, retention, and everyday people issues fall through the cracks.",
     statements: [
       "Hiring is reactive rather than planned",
       "We struggle to retain key people",
-      "Roles and responsibilities are unclear",
+      "No one clearly owns people operations",
     ],
   },
   {
@@ -51,9 +51,9 @@ const CATEGORIES = [
     key: "culture",
     label: "Culture & Communication",
     insight: "Communication flow",
-    line: "Communication and accountability are uneven. Clarity is the cheapest performance lever you have — and it's leaking.",
+    line: "When people aren't sure who to turn to, issues go unspoken — and clarity and accountability quietly erode.",
     statements: [
-      "Communication breakdowns happen often",
+      "Employees aren't sure who to go to when issues come up",
       "Teams are unclear on priorities",
       "Accountability is inconsistent across teams",
     ],
@@ -170,8 +170,9 @@ export default function Assessment() {
             <Eyebrow tone={C.blue}>Organizational Diagnostic</Eyebrow>
             <h1 className="asmt-title">Organizational Pulse Assessment&#8482;</h1>
             <p className="asmt-sub">
-              A 2-minute diagnostic to understand alignment across leadership,
-              people, operations, and culture.
+              Built for leaders carrying people operations on top of everything
+              else. A 2-minute read on where your organization is quietly straining
+              — across leadership, people, operations, and culture.
             </p>
             <div className="asmt-rule">
               <ElevationRule width={150} />
