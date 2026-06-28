@@ -18,16 +18,10 @@ const method = [
   ["05", "Elevate", "Strengthen leadership, culture, and long-term organizational health."],
 ];
 
-const includes = [
-  "Leadership interviews",
-  "Organizational health review",
-  "People systems analysis",
-  "Culture assessment",
-  "Operations review",
-  "AI readiness assessment",
-  "Risk identification",
-  "90-day roadmap",
-  "Executive presentation",
+const outcomes = [
+  "A clear read on where you're misaligned",
+  "A 90-day roadmap of what to fix first",
+  "An executive presentation to align your team",
 ];
 
 export default function Home() {
@@ -148,15 +142,28 @@ export default function Home() {
                 Elevation Assessment™
               </h2>
               <p className="offer-body">
-                A structured diagnostic that shows you exactly where your
-                organization is strong, where it's misaligned, and what to do next.
+                A deep diagnostic of the whole organization — leadership, people,
+                operations, culture, and AI readiness — built for leaders who've
+                outgrown running it all themselves. You'll leave knowing exactly
+                where you're misaligned and what to fix first.
               </p>
-              <CTA href="/assessment">Start an Assessment</CTA>
+              <p
+                style={{
+                  fontSize: "0.92rem",
+                  color: C.body,
+                  opacity: 0.78,
+                  margin: "0 0 1.6rem",
+                }}
+              >
+                Not ready for the full engagement? Start with the free 2-minute
+                Pulse.
+              </p>
+              <CTA href="/assessment">Take the 2-minute Pulse</CTA>
             </Reveal>
           </div>
           <Reveal delay={120} className="offer-right">
-            <ul className="includes">
-              {includes.map((x) => (
+            <ul className="includes" style={{ gridTemplateColumns: "1fr" }}>
+              {outcomes.map((x) => (
                 <li key={x}>
                   <span className="tick" />
                   {x}
